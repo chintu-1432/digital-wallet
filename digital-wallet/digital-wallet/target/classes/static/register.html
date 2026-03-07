@@ -61,7 +61,7 @@ let name=document.getElementById("name").value;
 let email=document.getElementById("email").value;
 let password=document.getElementById("password").value;
 
-fetch("/api/auth/register",{
+fetch("https://digital-wallet-et89.onrender.com/api/auth/register",{
 
 method:"POST",
 
@@ -95,4 +95,5 @@ alert("Registration failed");
 </script>
 
 </body>
+
 </html>
