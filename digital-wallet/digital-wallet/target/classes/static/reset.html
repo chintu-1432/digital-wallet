@@ -28,7 +28,7 @@ function reset(){
 
 let password=document.getElementById("password").value;
 
-fetch(`/api/auth/reset-password?token=${token}&newPassword=${password}`,{
+fetch(`https://digital-wallet-et89.onrender.com/api/auth/reset-password?token=${token}&newPassword=${password}`,{
 method:"POST"
 })
 .then(res=>res.text())
@@ -44,4 +44,5 @@ document.getElementById("msg").innerText="Error resetting password";
 </script>
 
 </body>
+
 </html>
