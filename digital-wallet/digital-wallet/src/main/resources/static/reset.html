@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reset Password</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Reset Password</h2>
+
+<input type="password" id="password" placeholder="New Password">
+
+<button onclick="reset()">Update Password</button>
+
+<p id="message"></p>
+
+</div>
+
+<script>
+
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get("token");
+
+function reset(){
+
+let password=document.getElementById("password").value;
+
+fetch(`/api/auth/reset-password?token=${token}&newPassword=${password}`,{
+method:"POST"
+})
+.then(res=>res.text())
+.then(data=>{
+document.getElementById("msg").innerText=data;
+})
+.catch(()=>{
+document.getElementById("msg").innerText="Error resetting password";
+});
+
+}
+
+</script>
+
+</body>
+</html>

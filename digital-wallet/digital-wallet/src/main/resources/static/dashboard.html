@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Digital Wallet Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>💳 Digital Wallet</h2>
+
+<p id="welcomeUser"></p>
+<p id="accountNumber"></p>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+
+<!-- MAIN AREA -->
+
+<div class="main">
+
+
+<!-- BALANCE CARD -->
+
+<div class="balance-card">
+
+<h3>Available Balance</h3>
+
+<div class="balance-amount">
+
+₹<span id="balance">0.00</span>
+
+</div>
+
+</div>
+
+
+<!-- SUMMARY -->
+
+<div class="summary-grid">
+
+<div class="summary-card">
+
+<h4>Total Deposits</h4>
+
+<p id="totalDeposit">₹0</p>
+
+</div>
+
+<div class="summary-card">
+
+<h4>Total Withdrawals</h4>
+
+<p id="totalWithdraw">₹0</p>
+
+</div>
+
+</div>
+
+
+<!-- TRANSFER MONEY -->
+
+<div class="transfer-box">
+
+<h3>Transfer Money</h3>
+
+<input type="text" id="receiverAccount" placeholder="Receiver Account Number">
+
+<input type="number" id="transferAmount" placeholder="Amount">
+
+<button onclick="transferMoney()">Send Money</button>
+
+</div>
+
+
+<!-- DEPOSIT / WITHDRAW -->
+
+<div class="actions">
+
+<input type="number" id="amount" placeholder="Enter amount">
+
+<button onclick="deposit()">Deposit</button>
+
+<button onclick="withdraw()">Withdraw</button>
+
+</div>
+
+
+<!-- TRANSACTION HISTORY -->
+
+<div class="transactions">
+
+<h3>Transaction History</h3>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Type</th>
+<th>Amount</th>
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+<tbody id="transactionTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* USER DATA */
+
+const email = localStorage.getItem("userEmail");
+const name = localStorage.getItem("userName");
+const accountNumber = localStorage.getItem("accountNumber");
+
+if(!email || !name){
+window.location.href="login.html";
+}
+
+/* SHOW USER INFO */
+
+document.getElementById("welcomeUser").innerText="Welcome, "+name;
+document.getElementById("accountNumber").innerText="Account Number: "+accountNumber;
+
+
+/* VARIABLES */
+
+let currentBalance=0;
+
+
+/* LOAD BALANCE */
+
+function loadBalance(){
+
+fetch(`/api/wallet/balance/${email}`)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+currentBalance=data;
+
+document.getElementById("balance").innerText=data.toFixed(2);
+
+});
+
+}
+
+
+/* LOAD TRANSACTIONS + TOTALS */
+
+function loadTransactions(){
+
+fetch(`/api/wallet/transactions/${email}`)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let table=document.getElementById("transactionTable");
+
+table.innerHTML="";
+
+let depositTotal=0;
+let withdrawTotal=0;
+
+data.forEach(tx=>{
+
+if(tx.type==="DEPOSIT"){
+depositTotal+=tx.amount;
+}
+
+if(tx.type==="WITHDRAWAL"){
+withdrawTotal+=tx.amount;
+}
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${tx.type}</td>
+
+<td>₹${tx.amount}</td>
+
+<td>${new Date(tx.date).toLocaleString()}</td>
+
+</tr>
+
+`;
+
+});
+
+/* UPDATE TOTALS */
+
+document.getElementById("totalDeposit").innerText="₹"+depositTotal.toFixed(2);
+document.getElementById("totalWithdraw").innerText="₹"+withdrawTotal.toFixed(2);
+
+});
+
+}
+
+
+/* DEPOSIT */
+
+function deposit(){
+
+let amt=parseFloat(document.getElementById("amount").value);
+
+if(!amt || amt<=0){
+
+alert("Enter valid amount");
+
+return;
+
+}
+
+fetch(`/api/wallet/deposit?email=${email}&amount=${amt}`,{
+
+method:"POST"
+
+})
+
+.then(res=>res.json())
+
+.then(newBalance=>{
+
+currentBalance=newBalance;
+
+document.getElementById("balance").innerText=newBalance.toFixed(2);
+
+document.getElementById("amount").value="";
+
+loadTransactions();
+
+});
+
+}
+
+
+/* WITHDRAW */
+
+function withdraw(){
+
+let amt=parseFloat(document.getElementById("amount").value);
+
+if(!amt || amt<=0){
+
+alert("Enter valid amount");
+
+return;
+
+}
+
+fetch(`/api/wallet/withdraw?email=${email}&amount=${amt}`,{
+
+method:"POST"
+
+})
+
+.then(res=>{
+
+if(!res.ok) throw new Error();
+
+return res.json();
+
+})
+
+.then(newBalance=>{
+
+currentBalance=newBalance;
+
+document.getElementById("balance").innerText=newBalance.toFixed(2);
+
+document.getElementById("amount").value="";
+
+loadTransactions();
+
+})
+
+.catch(()=>{
+
+alert("Insufficient Balance");
+
+});
+
+}
+
+
+/* TRANSFER */
+
+function transferMoney(){
+
+let receiverAccount=document.getElementById("receiverAccount").value;
+
+let amount=parseFloat(document.getElementById("transferAmount").value);
+
+if(!receiverAccount || !amount){
+
+alert("Enter account number and amount");
+
+return;
+
+}
+
+fetch("/api/wallet/transfer",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+fromEmail:email,
+toAccount:receiverAccount,
+amount:amount
+
+})
+
+})
+
+.then(res=>{
+
+if(!res.ok) throw new Error();
+
+return res.json();
+
+})
+
+.then(balance=>{
+
+currentBalance=balance;
+
+document.getElementById("balance").innerText=balance.toFixed(2);
+
+alert("Transfer successful");
+
+document.getElementById("transferAmount").value="";
+
+loadTransactions();
+
+})
+
+.catch(()=>{
+
+alert("Transfer failed");
+
+});
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.clear();
+
+window.location.href="login.html";
+
+}
+
+
+/* INITIAL LOAD */
+
+loadBalance();
+loadTransactions();
+
+</script>
+
+</body>
+
+</html>

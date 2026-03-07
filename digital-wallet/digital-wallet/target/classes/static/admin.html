@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+
+        <ul>
+            <li>Dashboard </li>
+            <li>Users</li>
+            <li>Transactions</li>
+        </ul>
+    </div>
+
+
+    <div class="main">
+
+        <h1>Admin Dashboard</h1>
+
+        <div class="stats">
+
+            <div class="card">
+                <h3>Total Users</h3>
+                <p id="userCount">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Transactions</h3>
+                <p id="txCount">0</p>
+            </div>
+
+        </div>
+
+
+        <h2>Users</h2>
+
+        <div class="table-box">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody id="usersTable"></tbody>
+
+            </table>
+        </div>
+
+
+        <h2>Transactions</h2>
+
+        <div class="table-box">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="txTable"></tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<script >
+    const API = "http://localhost:8080/api/admin"
+
+function loadCounts(){
+
+fetch(API+"/users/count")
+.then(res=>res.text())
+.then(data=>{
+document.getElementById("userCount").innerText=data
+})
+
+fetch(API+"/transactions/count")
+.then(res=>res.text())
+.then(data=>{
+document.getElementById("txCount").innerText=data
+})
+
+}
+
+function loadUsers(){
+
+fetch(API+"/users")
+.then(res=>res.json())
+.then(users=>{
+
+let table=document.getElementById("usersTable")
+
+table.innerHTML=""
+
+users.forEach(u=>{
+
+table.innerHTML+=`
+<tr>
+<td>${u.id}</td>
+<td>${u.name}</td>
+<td>${u.email}</td>
+<td>₹${u.balance}</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+function loadTransactions(){
+
+fetch(API+"/transactions")
+.then(res=>res.json())
+.then(txs=>{
+
+let table=document.getElementById("txTable")
+
+table.innerHTML=""
+
+txs.forEach(tx=>{
+
+table.innerHTML+=`
+<tr>
+<td>${tx.id}</td>
+<td>${tx.email}</td>
+<td>${tx.type}</td>
+<td>₹${tx.amount}</td>
+<td>${new Date(tx.date).toLocaleString()}</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+loadCounts()
+loadUsers()
+loadTransactions()
+</script>
+
+</body>
+</html>

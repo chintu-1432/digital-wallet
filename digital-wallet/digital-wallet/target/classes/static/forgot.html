@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Forgot Password</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Reset Password</h2>
+
+<input type="email" id="email" placeholder="Enter your registered email">
+
+<button onclick="resetPassword()">Send Reset Password</button>
+
+<p id="message"></p>
+
+<a href="login.html">Back to Login</a>
+
+</div>
+
+<script>
+
+function resetPassword(){
+
+let email=document.getElementById("email").value;
+
+fetch("/api/auth/forgot-password?email="+encodeURIComponent(email),{
+method:"POST"
+})
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("message").innerText=data.message;
+})
+.catch(()=>{
+document.getElementById("message").innerText="Server error";
+});
+
+}
+
+</script>
+</body>
+</html>

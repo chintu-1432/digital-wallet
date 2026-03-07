@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="auth-container">
+
+<div class="card">
+
+<h2>Login</h2>
+
+<form id="loginForm">
+
+<input type="email" id="email" placeholder="Email" required>
+
+<div class="password-box">
+
+<input type="password" id="password" placeholder="Password" required>
+
+<span class="toggle" onclick="togglePassword()">👁</span>
+
+</div>
+
+<button id="loginBtn" type="submit">Login</button>
+
+</form>
+
+<p id="response"></p>
+
+<p class="link-text">
+<a href="forgot.html">Forgot Password?</a>
+</p>
+
+<p class="link-text">
+Don’t have an account?
+<a href="register.html">Register</a>
+</p>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* LOGIN REQUEST */
+
+document.getElementById("loginForm").addEventListener("submit", function(e){
+
+e.preventDefault();
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+const btn = document.getElementById("loginBtn");
+
+btn.disabled = true;
+btn.innerText = "Logging in...";
+
+fetch("/api/auth/login",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+email:email,
+password:password
+})
+
+})
+
+.then(res=>{
+if(!res.ok){
+throw new Error("Login failed");
+}
+return res.json();
+})
+
+.then(data=>{
+
+localStorage.setItem("userEmail",data.email);
+localStorage.setItem("userName",data.name);
+localStorage.setItem("accountNumber",data.accountNumber);
+
+window.location.href="dashboard.html";
+
+})
+
+.catch(()=>{
+
+const msg=document.getElementById("response");
+
+msg.innerText="Login Failed";
+msg.className="error";
+
+btn.disabled=false;
+btn.innerText="Login";
+
+});
+
+});
+
+
+/* SHOW / HIDE PASSWORD */
+
+function togglePassword(){
+
+const input=document.getElementById("password");
+
+if(input.type==="password"){
+input.type="text";
+}else{
+input.type="password";
+}
+
+}
+
+</script>
+
+</body>
+</html>
