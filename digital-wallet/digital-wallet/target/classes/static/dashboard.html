@@ -136,6 +136,11 @@
 
 <script>
 
+/* BACKEND URL */
+
+const API_BASE = "https://digital-wallet-et89.onrender.com";
+
+
 /* USER DATA */
 
 const email = localStorage.getItem("userEmail");
@@ -145,6 +150,7 @@ const accountNumber = localStorage.getItem("accountNumber");
 if(!email || !name){
 window.location.href="login.html";
 }
+
 
 /* SHOW USER INFO */
 
@@ -161,7 +167,7 @@ let currentBalance=0;
 
 function loadBalance(){
 
-fetch(`/api/wallet/balance/${email}`)
+fetch(`${API_BASE}/api/wallet/balance/${email}`)
 
 .then(res=>res.json())
 
@@ -176,11 +182,11 @@ document.getElementById("balance").innerText=data.toFixed(2);
 }
 
 
-/* LOAD TRANSACTIONS + TOTALS */
+/* LOAD TRANSACTIONS */
 
 function loadTransactions(){
 
-fetch(`/api/wallet/transactions/${email}`)
+fetch(`${API_BASE}/api/wallet/transactions/${email}`)
 
 .then(res=>res.json())
 
@@ -219,8 +225,6 @@ table.innerHTML+=`
 
 });
 
-/* UPDATE TOTALS */
-
 document.getElementById("totalDeposit").innerText="₹"+depositTotal.toFixed(2);
 document.getElementById("totalWithdraw").innerText="₹"+withdrawTotal.toFixed(2);
 
@@ -243,7 +247,7 @@ return;
 
 }
 
-fetch(`/api/wallet/deposit?email=${email}&amount=${amt}`,{
+fetch(`${API_BASE}/api/wallet/deposit?email=${email}&amount=${amt}`,{
 
 method:"POST"
 
@@ -280,7 +284,7 @@ return;
 
 }
 
-fetch(`/api/wallet/withdraw?email=${email}&amount=${amt}`,{
+fetch(`${API_BASE}/api/wallet/withdraw?email=${email}&amount=${amt}`,{
 
 method:"POST"
 
@@ -331,7 +335,7 @@ return;
 
 }
 
-fetch("/api/wallet/transfer",{
+fetch(`${API_BASE}/api/wallet/transfer`,{
 
 method:"POST",
 
