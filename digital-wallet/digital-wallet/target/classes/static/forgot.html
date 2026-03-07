@@ -30,7 +30,7 @@ function resetPassword(){
 
 let email=document.getElementById("email").value;
 
-fetch("/api/auth/forgot-password?email="+encodeURIComponent(email),{
+fetch("https://digital-wallet-et89.onrender.com/api/auth/forgot-password?email="+encodeURIComponent(email),{
 method:"POST"
 })
 .then(res=>res.json())
@@ -45,4 +45,5 @@ document.getElementById("message").innerText="Server error";
 
 </script>
 </body>
+
 </html>
