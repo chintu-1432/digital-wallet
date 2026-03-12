@@ -42,7 +42,7 @@
 
 
 <script>
-
+const API_BASE = "https://digital-wallet-et89.onrender.com";
 function togglePassword(){
 
 let pass=document.getElementById("password");
@@ -61,7 +61,7 @@ let name=document.getElementById("name").value;
 let email=document.getElementById("email").value;
 let password=document.getElementById("password").value;
 
-fetch("/api/auth/register",{
+fetch('${API_BASE}/api/auth/register',{
 
 method:"POST",
 
@@ -97,5 +97,6 @@ alert("Registration failed");
 </body>
 
 </html>
+
 
 
