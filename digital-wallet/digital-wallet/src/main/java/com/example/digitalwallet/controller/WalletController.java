@@ -16,7 +16,7 @@ import com.example.digitalwallet.repository.TransactionRepository;
 import com.example.digitalwallet.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-@crossOrigin(origin="*")
+
 @RestController
 @RequestMapping("/api/wallet")
 @RequiredArgsConstructor
@@ -62,3 +62,4 @@ public Double transfer(@RequestBody TransferRequest request) {
 }
 
 }
+
