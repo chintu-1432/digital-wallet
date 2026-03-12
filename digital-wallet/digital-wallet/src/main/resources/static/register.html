@@ -61,7 +61,7 @@ let name=document.getElementById("name").value;
 let email=document.getElementById("email").value;
 let password=document.getElementById("password").value;
 
-fetch('${API_BASE}/api/auth/register',{
+fetch(`${API_BASE}/api/auth/register`,{
 
 method:"POST",
 
@@ -97,6 +97,7 @@ alert("Registration failed");
 </body>
 
 </html>
+
 
 
 
