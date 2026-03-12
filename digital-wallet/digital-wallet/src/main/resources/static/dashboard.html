@@ -136,6 +136,11 @@
 
 <script>
 
+/* BACKEND URL */
+
+const API_BASE = "https://digital-wallet-et89.onrender.com";
+
+
 /* USER DATA */
 
 const email = localStorage.getItem("userEmail");
@@ -145,6 +150,7 @@ const accountNumber = localStorage.getItem("accountNumber");
 if(!email || !name){
 window.location.href="index.html";
 }
+
 
 /* SHOW USER INFO */
 
@@ -161,7 +167,7 @@ let currentBalance=0;
 
 function loadBalance(){
 
-fetch(`/api/wallet/balance/${email}`)
+fetch(`${API_BASE}/api/wallet/balance/${email}`)
 
 .then(res=>res.json())
 
@@ -176,11 +182,11 @@ document.getElementById("balance").innerText=data.toFixed(2);
 }
 
 
-/* LOAD TRANSACTIONS + TOTALS */
+/* LOAD TRANSACTIONS */
 
 function loadTransactions(){
 
-fetch(`/api/wallet/transactions/${email}`)
+fetch(`${API_BASE}/api/wallet/transactions/${email}`)
 
 .then(res=>res.json())
 
@@ -219,8 +225,6 @@ table.innerHTML+=`
 
 });
 
-/* UPDATE TOTALS */
-
 document.getElementById("totalDeposit").innerText="₹"+depositTotal.toFixed(2);
 document.getElementById("totalWithdraw").innerText="₹"+withdrawTotal.toFixed(2);
 
@@ -238,15 +242,12 @@ let amt=parseFloat(document.getElementById("amount").value);
 if(!amt || amt<=0){
 
 alert("Enter valid amount");
-
 return;
 
 }
 
-fetch(`/api/wallet/deposit?email=${email}&amount=${amt}`,{
-
+fetch(`${API_BASE}/api/wallet/deposit?email=${email}&amount=${amt}`,{
 method:"POST"
-
 })
 
 .then(res=>res.json())
@@ -275,23 +276,17 @@ let amt=parseFloat(document.getElementById("amount").value);
 if(!amt || amt<=0){
 
 alert("Enter valid amount");
-
 return;
 
 }
 
-fetch(`/api/wallet/withdraw?email=${email}&amount=${amt}`,{
-
+fetch(`${API_BASE}/api/wallet/withdraw?email=${email}&amount=${amt}`,{
 method:"POST"
-
 })
 
 .then(res=>{
-
 if(!res.ok) throw new Error();
-
 return res.json();
-
 })
 
 .then(newBalance=>{
@@ -307,9 +302,7 @@ loadTransactions();
 })
 
 .catch(()=>{
-
 alert("Insufficient Balance");
-
 });
 
 }
@@ -326,12 +319,11 @@ let amount=parseFloat(document.getElementById("transferAmount").value);
 if(!receiverAccount || !amount){
 
 alert("Enter account number and amount");
-
 return;
 
 }
 
-fetch("/api/wallet/transfer",{
+fetch(`${API_BASE}/api/wallet/transfer`,{
 
 method:"POST",
 
@@ -350,11 +342,8 @@ amount:amount
 })
 
 .then(res=>{
-
 if(!res.ok) throw new Error();
-
 return res.json();
-
 })
 
 .then(balance=>{
@@ -372,9 +361,7 @@ loadTransactions();
 })
 
 .catch(()=>{
-
 alert("Transfer failed");
-
 });
 
 }
@@ -385,8 +372,7 @@ alert("Transfer failed");
 function logout(){
 
 localStorage.clear();
-
-window.location.href="login.html";
+window.location.href="index.html";
 
 }
 
@@ -402,3 +388,4 @@ loadTransactions();
 
 
 </html>
+
