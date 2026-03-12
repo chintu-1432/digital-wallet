@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Login</title>
@@ -55,6 +54,11 @@ Don’t have an account?
 
 <script>
 
+/* BACKEND URL */
+
+const API_BASE = "https://digital-wallet-et89.onrender.com";
+
+
 /* LOGIN REQUEST */
 
 document.getElementById("loginForm").addEventListener("submit", function(e){
@@ -69,7 +73,7 @@ const btn = document.getElementById("loginBtn");
 btn.disabled = true;
 btn.innerText = "Logging in...";
 
-fetch("/api/auth/login",{
+fetch(`${API_BASE}/api/auth/login`,{
 
 method:"POST",
 
